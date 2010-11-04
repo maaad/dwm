@@ -1,9 +1,12 @@
 This is my clone of dwm repo
 
 Applied:
-+bstack
-+grid
-+cycle per tags and layouts
+ +pertags (adapted to layouts patches)
+ +bstack
+ +grid
+ +cycle per tags and layouts
+ +warp
+ +fancybar
 
 
 

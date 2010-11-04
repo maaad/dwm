@@ -2,6 +2,7 @@ This is my clone of dwm repo
 
 Applied:
  +pertags (adapted to layouts patches)
+    +initlayouts for pertags
  +bstack
  +grid
  +cycle per tags and layouts

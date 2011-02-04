@@ -53,6 +53,7 @@
 #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
 #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
 #define TEXTW(X)                (textnw(X, strlen(X)) + dc.font.height)
+#define ISPANEL(x) (ISVISIBLE(x)&&(strcmp("panel",x->name) == 0))
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast };        /* cursor */
@@ -1076,7 +1077,7 @@ grabkeys(void) {
 void
 initfont(const char *fontstr) {
 	char *def, **missing;
-	int i, n;
+	int n;
 
 	missing = NULL;
 	dc.font.set = XCreateFontSet(dpy, fontstr, &missing, &n, &def);
@@ -1093,7 +1094,7 @@ initfont(const char *fontstr) {
 		dc.font.ascent = dc.font.descent = 0;
 		font_extents = XExtentsOfFontSet(dc.font.set);
 		n = XFontsOfFontSet(dc.font.set, &xfonts, &font_names);
-		for(i = 0, dc.font.ascent = 0, dc.font.descent = 0; i < n; i++) {
+        while(n--) {
 			dc.font.ascent = MAX(dc.font.ascent, (*xfonts)->ascent);
 			dc.font.descent = MAX(dc.font.descent,(*xfonts)->descent);
 			xfonts++;
@@ -1111,14 +1112,13 @@ initfont(const char *fontstr) {
 
 Bool
 isprotodel(Client *c) {
-	int i, n;
+	int n;
 	Atom *protocols;
 	Bool ret = False;
 
 	if(XGetWMProtocols(dpy, c->win, &protocols, &n)) {
-		for(i = 0; !ret && i < n; i++)
-			if(protocols[i] == wmatom[WMDelete])
-				ret = True;
+        while(!ret && n--)
+            ret = protocols[n] == wmatom[WMDelete];
 		XFree(protocols);
 	}
 	return ret;
@@ -1126,13 +1126,11 @@ isprotodel(Client *c) {
 
 #ifdef XINERAMA
 static Bool
-isuniquegeom(XineramaScreenInfo *unique, size_t len, XineramaScreenInfo *info) {
-	unsigned int i;
-
-	for(i = 0; i < len; i++)
-		if(unique[i].x_org == info->x_org && unique[i].y_org == info->y_org
-		&& unique[i].width == info->width && unique[i].height == info->height)
-			return False;
+isuniquegeom(XineramaScreenInfo *unique, size_t n, XineramaScreenInfo *info) {
+    while(n--)
+        if(unique[n].x_org == info->x_org && unique[n].y_org == info->y_org
+            && unique[n].width == info->width && unique[n].height == info->height)
+			    return False;
 	return True;
 }
 #endif /* XINERAMA */
@@ -1330,6 +1328,7 @@ movemouse(const Arg *arg) {
 		selmon = m;
 		focus(NULL);
 	}
+    if(ISPANEL(c)) return;
 }
 
 Client *
@@ -1487,6 +1486,7 @@ resizemouse(const Arg *arg) {
 		selmon = m;
 		focus(NULL);
 	}
+    if(ISPANEL(c)) return;
 }
 
 void

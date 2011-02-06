@@ -1,6 +1,9 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
+static const Bool systray_enable = True;
+static const int systray_spacing = 1;
+
 static const char font[]            = "-*-nu-*-r-normal-*-11-*-*-*-*-iso8859-1";
 static const char normbordercolor[] = "#555753";  
 static const char normbgcolor[]     = "#2e3436";
@@ -16,7 +19,7 @@ static const Bool topbar            = True;     /* False means bottom bar */
 static const Rule rules[] = {
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",       NULL,      NULL,        0,            True,        -1 },
-	{ "URxvt",      NULL,      NULL,        0,            False,        -1 },
+	{ "URxvt",      NULL,      NULL,        0,            False,       -1 },
 	{ "Firefox",    NULL,      NULL,        1 << 1,       False,       -1 },
 	{ "Chrome",     NULL,      NULL,        1 << 1,       False,       -1 },
 	{ "Krusader",   NULL,      NULL,        1 << 2,       False,       -1 },
@@ -26,7 +29,6 @@ static const Rule rules[] = {
 	{ "Skype",      NULL,      NULL,        1 << 5,       True,        -1 },
 	{ "MPlayer",    NULL,      NULL,        1 << 3,       True,        -1 },
 	{ "VirtualBox", NULL,      NULL,        1 << 6,       False,       -1 },
-    {  NULL,        NULL,      "panel",     ~0,           False,       -1 },
 };
 
 static const int  initlayouts[] = { 0, 2, 5, 0, 2, 1, 1, 0 };
@@ -37,6 +39,7 @@ static const Bool resizehints = False; /* True means respect size hints in tiled
 #include "grid.c"
 #include "bstack.c"
 #include "bstackhoriz.c"
+#include "launcher.c"
 static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[T]",      tile },    /* first entry is default */
@@ -67,7 +70,8 @@ static const char *termcmd[]  = { "urxvtc", NULL };
 #include "cycle.c"
 static Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+	{ MODKEY|ShiftMask,             XK_p,      spawn,          {.v = dmenucmd } },
+    { MODKEY,                       XK_p,      launcher,       {0} },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY|ShiftMask,             XK_M,      spawn,          {.v = mccmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },

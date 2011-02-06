@@ -7,30 +7,23 @@ static void launcher(const Arg *arg){
     Bool grabbing = True;
     KeySym ks;
     XEvent ev;
-
     memset(tmp, 0, sizeof(tmp));
     memset(buf, 0, sizeof(buf));
     pos = 0;
-
     x = 0;
     for(i = 0; i < LENGTH(tags); i++) x+= TEXTW(tags[i]);
     x += TEXTW(selmon->ltsymbol);
     dc.x = x;
     dc.w = selmon->ww - x - TEXTW(stext);
-
     XGrabKeyboard(dpy, ROOT, True, GrabModeAsync, GrabModeAsync, CurrentTime);
-
     drawtext(prompt, dc.norm, False);
     dc.x += TEXTW(prompt);
     XDrawLine(dpy, dc.drawable, dc.gc, dc.x, 3, dc.x, bh-3);
-
     XCopyArea(dpy, dc.drawable, selmon -> barwin, dc.gc, x, 0, dc.w, bh, x, 0);
     XSync(dpy, False);
-
     while(grabbing){
         if(ev.type == KeyPress) {
             XLookupString(&ev.xkey, tmp, sizeof(tmp), &ks, 0);
-
             switch(ks){
 /*               case XK_Up:
                     if(launcher->nhisto)
@@ -168,13 +161,11 @@ static void launcher(const Arg *arg){
             }
         drawtext(buf, dc.norm, False);
         XDrawLine(dpy, dc.drawable, dc.gc, dc.x+TEXTW(buf), 3, dc.x+TEXTW(buf), bh-3);
-
         XCopyArea(dpy, dc.drawable, selmon->barwin, dc.gc, dc.x, 0, dc.w-TEXTW(prompt), bh, dc.x, 0);
         XSync(dpy, False);
         }
         XNextEvent(dpy, &ev);
     }
-
     drawbar(selmon);
     XUngrabKeyboard(dpy, CurrentTime);
     return;
@@ -183,16 +174,12 @@ static void launcher(const Arg *arg){
 pid_t shexec(const char *cmd){
     char *sh = NULL;
     pid_t pid;
-
     if(!(sh = getenv("SHELL"))) sh = "/bin/sh";
-
     if((pid = fork()) == 0){
         if(dpy) close(ConnectionNumber(dpy));
-
         setsid();
         execl(sh, sh, "-c", cmd, (char*)NULL);
     }
-
     return pid;
 }
 
